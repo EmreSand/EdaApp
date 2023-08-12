@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
 import streamlit as st
-from pandas_profiling import ProfileReport
+# from pandas_profiling import ProfileReport
+from ydata_profiling import ProfileReport
 from streamlit_pandas_profiling import st_profile_report
 
 #  Title of Web App
@@ -20,6 +21,7 @@ with st.sidebar.header("1. Upload your CSV file"):
 
 # Pandas Profiling
 if uploaded_file: # is not None necessary????
+
     @st.cache_data
     def load_csv():
         csv = pd.read_csv(uploaded_file)
@@ -32,4 +34,23 @@ if uploaded_file: # is not None necessary????
     st.header("***Pandas Profiling Report***")
     st_profile_report(pr)
 
+else:
+
+    st.info("Awaiting for CSV file upload")
+    if st.button("Press to use Example Dataset"): # User can prefer example data here
+
+        @st.cache_data
+        def load_data():  # A function to create a sample DataFrame of size 100*5 and random numbers between 0-1
+            sample = pd.DataFrame(
+                np.random.rand(100,5), 
+                columns=['a', 'b', 'c', 'd', 'e']
+            )
+            return sample
+        df = load_data()
+        pr = ProfileReport(df, explorative=True)
+        st.header("***Input DataFrame***")
+        st.write(df)
+        st.write("---")
+        st.header("*** Pandas Profiling Report***")
+        st_profile_report(pr)
 
